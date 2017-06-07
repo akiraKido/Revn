@@ -53,6 +53,7 @@ namespace Revn
 
             if(!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
+                Console.ReadLine();
                 return;
             }
 

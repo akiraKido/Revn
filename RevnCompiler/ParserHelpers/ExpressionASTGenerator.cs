@@ -134,20 +134,16 @@ namespace RevnCompiler.ParserHelpers
 
                     var instanceCall = new InstanceFunctionCallAST
                     {
-                        InstanceName = identifier,
+                        Variable = ParseVariable(identifier),
                         CallFunction = functionName,
                         Args = arg
                     };
+
                     return instanceCall;
                 }
 
-                string type = functionGenerator.GetVariable(identifier).ReturnType;
-
-                var variable = new VariableExpressionAST();
-                variable.ReturnType = type;
-                variable.Name = identifier;
-                variable.Index = LocalVariableIndex;
-                return variable;
+                // return variable
+                return ParseVariable(identifier);
             }
 
             if (inferedType == null)
@@ -179,6 +175,17 @@ namespace RevnCompiler.ParserHelpers
             parser.ProceedToken(); // ) を消費
 
             return new CallExpressionAST(identifier, args, inferedType);
+        }
+
+        private VariableExpressionAST ParseVariable(string identifier)
+        {
+            string type = functionGenerator.GetVariable(identifier).ReturnType;
+
+            var variable = new VariableExpressionAST();
+            variable.ReturnType = type;
+            variable.Name = identifier;
+            variable.Index = LocalVariableIndex;
+            return variable;
         }
 
         private ExpressionAST ParseBinOpRHS(int expressionPrecedence, ExpressionAST LHS)

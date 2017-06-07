@@ -7,6 +7,8 @@ namespace Revn:
             val x = 10 + 30
             val y = 20
             Console.WriteLine(x + 30)
+            val hoge = 10
+            hoge test 10
         end
     end
 end
