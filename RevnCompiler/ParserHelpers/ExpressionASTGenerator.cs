@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using RevnCompiler.ASTs;
 
@@ -125,6 +125,22 @@ namespace RevnCompiler.ParserHelpers
                     RevnException.ThrowParserException("Variable is not assigned.", parser.LastToken);
                 }
 
+                if(parser.LastToken.TokenType == TokenType.Identifier)
+                {
+                    string functionName = parser.LastToken.Value;
+                    parser.ProceedToken(); // 関数名を消費
+                    var arg = new List<ExpressionAST>();
+                    arg.Add(GenerateExpressionAST());
+
+                    var instanceCall = new InstanceFunctionCallAST
+                    {
+                        InstanceName = identifier,
+                        CallFunction = functionName,
+                        Args = arg
+                    };
+                    return instanceCall;
+                }
+
                 string type = functionGenerator.GetVariable(identifier).ReturnType;
 
                 var variable = new VariableExpressionAST();
@@ -172,6 +188,7 @@ namespace RevnCompiler.ParserHelpers
                 int tokenPrecedence = GetPrecedence(parser.LastToken);
                 if (tokenPrecedence < expressionPrecedence) return LHS;
 
+                // operator can be any string
                 string _operator = parser.LastToken.Value;
                 parser.ProceedToken(); // 演算子を消費
 
@@ -190,8 +207,8 @@ namespace RevnCompiler.ParserHelpers
 
         private int GetPrecedence(Token token)
         {
-            if (!BinopPrecedence.ContainsKey(token.Value)) return -1;
-            return BinopPrecedence[token.Value];
+            if (!BinopPrecedence.ContainsKey(token.Value[0].ToString())) return -1;
+            return BinopPrecedence[token.Value[0].ToString()];
         }
     }
 }
